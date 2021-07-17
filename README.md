@@ -18,4 +18,4 @@ We will use Azure Cloud services to build the data pipeline.
 - Pover BI
 
 # System Diagram
-![image](https://user-images.githubusercontent.com/24934034/126035496-1e8836f0-e280-4006-82a9-1461e4ee3c09.png)
+![image](https://user-images.githubusercontent.com/24934034/126035605-1992c556-bb7e-455e-b2b1-9c91614ec136.png)
