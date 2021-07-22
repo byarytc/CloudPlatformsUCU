@@ -48,6 +48,31 @@ resource "azurerm_app_service_plan" "funcdeploy" {
   }
 }
 
+resource "azurerm_eventhub_namespace" "ehn" {
+  name                = "${var.prefix}-eh"
+  location            = azurerm_resource_group.funcdeploy.location
+  resource_group_name = azurerm_resource_group.funcdeploy.name
+
+  sku      = "Standard"
+  capacity = 1
+
+  auto_inflate_enabled     = true
+  maximum_throughput_units = 5
+
+  identity {
+    type = "SystemAssigned"
+  }
+}
+
+resource "azurerm_eventhub" "eh_raw" {
+  name                = "iot_events_raw"
+  namespace_name      = azurerm_eventhub_namespace.ehn.name
+  resource_group_name = azurerm_resource_group.funcdeploy.name
+
+  partition_count   = 3
+  message_retention = 1
+}
+
 resource "azurerm_function_app" "funcdeploy" {
   name                       = "${var.prefix}func"
   location                   = azurerm_resource_group.funcdeploy.location
@@ -62,7 +87,9 @@ resource "azurerm_function_app" "funcdeploy" {
       "WEBSITE_RUN_FROM_PACKAGE" = "1"
       "FUNCTIONS_WORKER_RUNTIME" = "python"
       "APPINSIGHTS_INSTRUMENTATIONKEY" = "${azurerm_application_insights.funcdeploy.instrumentation_key}"
-      "APPLICATIONINSIGHTS_CONNECTION_STRING" = "InstrumentationKey=${azurerm_application_insights.funcdeploy.instrumentation_key};IngestionEndpoint=https://japaneast-0.in.applicationinsights.azure.com/"
+      "APPLICATIONINSIGHTS_CONNECTION_STRING" = "InstrumentationKey=${azurerm_application_insights.funcdeploy.instrumentation_key};IngestionEndpoint=https://westeurope-0.in.applicationinsights.azure.com/"
+      "eventHubName": azurerm_eventhub.eh_raw.name,
+      "CloudComputingEventHubConnectionString": azurerm_eventhub_namespace.ehn.default_primary_connection_string,
   }
 
   site_config {

@@ -6,6 +6,13 @@
           "type": "timerTrigger",
           "direction": "in",
           "schedule": "0 */1 * * * *"
-      }
+      },
+    {
+      "type": "eventHub",
+      "name": "$return",
+      "eventHubName": "%eventHubName%",
+      "connection": "CloudComputingEventHubConnectionString",
+      "direction": "out"
+  }
   ]
 }
