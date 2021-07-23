@@ -2,6 +2,8 @@ import datetime
 import logging
 import json
 import azure.functions as func
+from requests import Request, Session
+from requests.exceptions import ConnectionError, Timeout, TooManyRedirects
 
 
 def main(mytimer: func.TimerRequest) -> str:
@@ -13,12 +15,30 @@ def main(mytimer: func.TimerRequest) -> str:
 
     logging.info('Python timer trigger function ran at %s', utc_timestamp)
 
-    body = "This is test message"
-    timestamp = datetime.datetime.utcnow()
+    url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest'
+    parameters = {
+    'convert':'USD',
+    'symbol':'BTC,ETH,XRP,ADA,DOT'
+    }
+    headers = {
+    'Accepts': 'application/json',
+    'X-CMC_PRO_API_KEY': 'secret',
+    }
 
-    eventContent = {
-        "body": body,
+    session = Session()
+    session.headers.update(headers)
+
+    try:
+        response = session.get(url, params=parameters)
+        data = json.loads(response.text)
+        timestamp = datetime.datetime.utcnow()
+
+        eventContent = {
+        "body": data,
         "processedAt": f'{timestamp}'
         }
+
+    except (ConnectionError, Timeout, TooManyRedirects) as e:
+        print(e)
 
     return json.dumps(eventContent)
