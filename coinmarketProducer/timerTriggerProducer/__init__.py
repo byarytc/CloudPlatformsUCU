@@ -22,7 +22,7 @@ def main(mytimer: func.TimerRequest) -> str:
     }
     headers = {
     'Accepts': 'application/json',
-    'X-CMC_PRO_API_KEY': 'secret',
+    'X-CMC_PRO_API_KEY': '9199d0ba-d02c-4cea-a36d-0f513fb111e1',
     }
 
     session = Session()

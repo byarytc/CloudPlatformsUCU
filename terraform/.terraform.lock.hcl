@@ -1,6 +1,21 @@
 # This file is maintained automatically by "terraform init".
 # Manual edits may be lost in future updates.
 
+provider "registry.terraform.io/databrickslabs/databricks" {
+  version     = "0.2.5"
+  constraints = "0.2.5"
+  hashes = [
+    "h1:hfhxBMXs/Ok+HQ3804EMAP5MbTGUrsmST2uATKPpcBE=",
+    "zh:1b44bbb064ef085ea9e26549807287bec340e4386f0c0ac63f0f86e13456dc13",
+    "zh:6a8190b7617a09dbf864fb79ba2d88409ef9e9c8130812e4ec2401dd7f96967b",
+    "zh:a545ca2e3be09e48f065962311d780ab04ee87c836812bb2e7eeb72dda1592a8",
+    "zh:ae9b4bc3458cdb46071a5ab828cc46a1c84a234d899c402daad527018c790264",
+    "zh:d41a1c5d55931398db312ae567d1e435e01c7b6e898c87d2834ff18c857b28c6",
+    "zh:ebd84cc2311dd3c6bbc61b280a7a594763c60c0deaad09cc810ed71d89c32132",
+    "zh:f8632b35a7f3d46cb2c913122ddb9a557baf70d14f89d6f131b5b11c6cc50a6c",
+  ]
+}
+
 provider "registry.terraform.io/hashicorp/azurerm" {
   version     = "2.65.0"
   constraints = "2.65.0"

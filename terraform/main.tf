@@ -22,6 +22,13 @@ resource "azurerm_storage_container" "funcdeploy" {
   container_access_type = "private"
 }
 
+resource "azurerm_storage_container" "funcdeploy" {
+  name                  = "databriks_output"
+  storage_account_name  = azurerm_storage_account.funcdeploy.name
+  container_access_type = "private"
+}
+
+
 resource "azurerm_application_insights" "funcdeploy" {
   name                = "${var.prefix}-appinsights"
   location            = azurerm_resource_group.funcdeploy.location
@@ -49,7 +56,7 @@ resource "azurerm_app_service_plan" "funcdeploy" {
 }
 
 resource "azurerm_eventhub_namespace" "ehn" {
-  name                = "${var.prefix}-eh"
+  name                = "${var.prefix}-ehs"
   location            = azurerm_resource_group.funcdeploy.location
   resource_group_name = azurerm_resource_group.funcdeploy.name
 
@@ -64,7 +71,7 @@ resource "azurerm_eventhub_namespace" "ehn" {
   }
 }
 
-resource "azurerm_eventhub" "eh_raw" {
+resource "azurerm_eventhub" "ehs_raw" {
   name                = "iot_events_raw"
   namespace_name      = azurerm_eventhub_namespace.ehn.name
   resource_group_name = azurerm_resource_group.funcdeploy.name
@@ -88,7 +95,7 @@ resource "azurerm_function_app" "funcdeploy" {
       "FUNCTIONS_WORKER_RUNTIME" = "python"
       "APPINSIGHTS_INSTRUMENTATIONKEY" = "${azurerm_application_insights.funcdeploy.instrumentation_key}"
       "APPLICATIONINSIGHTS_CONNECTION_STRING" = "InstrumentationKey=${azurerm_application_insights.funcdeploy.instrumentation_key};IngestionEndpoint=https://westeurope-0.in.applicationinsights.azure.com/"
-      "eventHubName": azurerm_eventhub.eh_raw.name,
+      "eventHubName": azurerm_eventhub.ehs_raw.name,
       "CloudComputingEventHubConnectionString": azurerm_eventhub_namespace.ehn.default_primary_connection_string,
   }
 
@@ -127,9 +134,9 @@ resource "azurerm_stream_analytics_stream_input_eventhub" "asa_input" {
   name                         = "eventhub-stream-input"
   stream_analytics_job_name    = azurerm_stream_analytics_job.funcdeploy.name
   resource_group_name          = azurerm_stream_analytics_job.funcdeploy.resource_group_name
-  eventhub_consumer_group_name = "$Default"#azurerm_eventhub_consumer_group.eh_raw.name
-  eventhub_name                = azurerm_eventhub.eh_raw.name
-  servicebus_namespace         = azurerm_eventhub.eh_raw.namespace_name
+  eventhub_consumer_group_name = "$Default"#azurerm_eventhub_consumer_group.ehs_raw.name
+  eventhub_name                = azurerm_eventhub.ehs_raw.name
+  servicebus_namespace         = azurerm_eventhub.ehs_raw.namespace_name
   shared_access_policy_key     = azurerm_eventhub_namespace.ehn.default_primary_key
   shared_access_policy_name    = "RootManageSharedAccessKey"
 
@@ -156,3 +163,76 @@ resource "azurerm_stream_analytics_output_blob" "asa_output" {
     format          = "LineSeparated"
   }
 } 
+
+
+resource "azurerm_cosmosdb_account" "acc" {
+  name = "${var.cosmos_db_account_name}"
+  location = azurerm_resource_group.funcdeploy.location
+  resource_group_name = azurerm_resource_group.funcdeploy.name
+  offer_type = "Standard"
+  kind = "GlobalDocumentDB"
+  enable_automatic_failover = true
+consistency_policy {
+    consistency_level = "Session"
+  }
+  
+  geo_location {
+    location = azurerm_resource_group.funcdeploy.location
+    failover_priority = 1
+  }
+geo_location {
+    location = "${var.failover_location}"
+    failover_priority = 0
+  }
+}
+
+
+resource "azurerm_cosmosdb_sql_database" "acc" {
+  name                = "output-from-databricks"
+  resource_group_name = azurerm_resource_group.funcdeploy.name
+  account_name        = "${azurerm_cosmosdb_account.acc.name}"
+  throughput          = 400
+}
+
+
+
+
+
+terraform {
+  required_providers {
+    databricks = {
+      source = "databrickslabs/databricks"
+      version = "0.2.5"
+    }
+ 
+  }
+}
+
+
+
+provider "databricks" {
+  azure_workspace_resource_id = azurerm_databricks_workspace.myworkspace.id
+  
+}
+
+
+  
+resource "azurerm_databricks_workspace" "myworkspace" {
+  location                      = azurerm_resource_group.funcdeploy.location
+  name                          = "${var.prefix}-workspace"
+  resource_group_name           = azurerm_resource_group.funcdeploy.name
+  sku                           = "trial"
+}
+
+resource "databricks_scim_user" "admin" {
+  user_name    = "admin@example.com"
+  display_name = "Admin"
+  set_admin    = true
+  default_roles = []
+}
+
+
+
+
+
+
