@@ -22,12 +22,6 @@ resource "azurerm_storage_container" "funcdeploy" {
   container_access_type = "private"
 }
 
-resource "azurerm_storage_container" "funcdeploy" {
-  name                  = "databriks_output"
-  storage_account_name  = azurerm_storage_account.funcdeploy.name
-  container_access_type = "private"
-}
-
 
 resource "azurerm_application_insights" "funcdeploy" {
   name                = "${var.prefix}-appinsights"
