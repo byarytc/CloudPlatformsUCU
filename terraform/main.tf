@@ -117,15 +117,17 @@ resource "azurerm_stream_analytics_job" "funcdeploy" {
   streaming_units                          = 1
 
   transformation_query = <<QUERY
-    SELECT System.Timestamp() as Time
+        SELECT System.Timestamp() as Time
       , body.data.ADA.name as ADA
       , max(body.data.ADA.quote.USD.price) as ADAPrice
       , body.data.BTC.name as BTC
       , max(body.data.BTC.quote.USD.price) as BTCPrice
-    INTO [output-to-blob-storage]
+      , 0 as PartitionId
+    INTO [cosmos]
     FROM [eventhub-stream-input]
     TIMESTAMP BY body.status.timestamp
     GROUP BY body.data.ADA.name, body.data.BTC.name, TumblingWindow(minute,5) 
+
   QUERY
 
 }
