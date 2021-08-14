@@ -21,4 +21,4 @@ We will use Azure Cloud services to build the data pipeline.
 ![image](https://user-images.githubusercontent.com/24934034/126035617-d00815b0-19c8-4846-b2d9-584140c8e51e.png)
 
 # Data flow Diagram
-![image](https://user-images.githubusercontent.com/26571307/126040884-6e41b5f3-f9a8-472d-9540-68858395afdd.png)
+![image](https://user-images.githubusercontent.com/24934034/129438089-5111a451-d572-4891-a867-58f9469b53f4.png)
