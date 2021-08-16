@@ -28,3 +28,5 @@ We will use Azure Cloud services to build the data pipeline.
   3. Set direction to 'terraform' and execute following command: terraform init, terraform plan, terraform apply
   4. Change working direction to coinmarketProducer, set valid API key for file coinmarketProducer/timerTriggerProducer/__init__.py, line 25
   5. Execute following command from console line: func azure functionapp publish ucucloudplatformsfunc -- python
+  6. Manually create databriks cluster inside workspace using cluster_config.json file (check paste_cluster_config.png screenshot).
+  7. Import ucu1_coindata_to_blob.ipynb notebook to your workspace and install library(use install_library.png faleas a tip). Run code in notebook.
