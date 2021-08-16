@@ -22,7 +22,7 @@ We will use Azure Cloud services to build the data pipeline.
 # Data flow Diagram
 ![image](https://user-images.githubusercontent.com/24934034/129438089-5111a451-d572-4891-a867-58f9469b53f4.png)
 
-#How To Start Project
+# How To Start Project
   1. Checkout on main branch and start the dev container
   2. Login to your Azure azzount following command: az login --use-device
   3. Set direction to 'terraform' and execute following command: terraform init, terraform plan, terraform apply
