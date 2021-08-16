@@ -15,10 +15,16 @@ We will use Azure Cloud services to build the data pipeline.
 - Azure BLOB
 - Azure Databricks
 - Event Hubs
-- Pover BI
 
 # System Diagram
 ![image](https://user-images.githubusercontent.com/24934034/129438132-63d59820-5019-4ff7-a842-47597f23f625.png)
 
 # Data flow Diagram
 ![image](https://user-images.githubusercontent.com/24934034/129438089-5111a451-d572-4891-a867-58f9469b53f4.png)
+
+#How To Start Project
+  1. Checkout on main branch and start the dev container
+  2. Login to your Azure azzount following command: az login --use-device
+  3. Set direction to 'terraform' and execute following command: terraform init, terraform plan, terraform apply
+  4. Change working direction to coinmarketProducer, set valid API key for file coinmarketProducer/timerTriggerProducer/__init__.py, line 25
+  5. Execute following command from console line: func azure functionapp publish ucucloudplatformsfunc -- python
