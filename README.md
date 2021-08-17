@@ -30,6 +30,6 @@ We will use Azure Cloud services to build the data pipeline.
   5. Execute following command from console line: func azure functionapp publish ucucloudplatformsfunc -- python
   6. Manually create databriks cluster inside workspace using cluster_config.json file (check paste_cluster_config.png screenshot).
   7. Import ucu1_coindata_to_blob.ipynb notebook to your workspace and install library(use install_library.png faleas a tip). Run code in notebook.
-  8. Output from ASA to Cosmos should be manually configured as terraform doesn't currntly support such output:
+  8. Output from ASA to Cosmos should be manually configured as terraform doesn't currently support such output:
     a) create Cosmos container with parttition key 'PartitionId'
     b) add ASA output to Cosmos with alias 'cosmos' (this alias is used in the transform query) 
